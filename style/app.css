@@ -1,0 +1,21 @@
+#pictureContainer{
+    width: 800px;
+    height: 450px;
+    background-color: #E4DCE2;
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
+    font-size: xx-large;
+    font-family: monospace;
+    cursor: pointer;
+    border: black dashed 4px;
+}
+#pictureContainer.imageLoaded{
+    color: rgba(25, 22, 22, 0.71);
+    border-color: rgba(49, 46, 46, 0.43);
+    border-width: 2px;
+}
+#puzzlePicture{
+    max-width: 1024px;
+    max-height: 768px;
+}
