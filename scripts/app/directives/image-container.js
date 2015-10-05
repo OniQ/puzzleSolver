@@ -2,7 +2,7 @@
  * Created by OniQ on 04/10/15.
  */
 define(['puzzleDirectives'], function(puzzleDirectives){
-    puzzleDirectives.directive('imageContainer', function(imageManager) {
+    puzzleDirectives.directive('imageContainer', function($timeout, imageManager) {
         return {
             templateUrl: "templates/directives/image-container.html",
             controller: function ($scope, $element, $attrs) {
@@ -18,6 +18,11 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 function appendFile(image){
                     $scope.src = image.src;
                     $scope.hasImage = true;
+                    var container = document.getElementById("pictureContainer");
+/*                    if (image.width < container.offsetWidth)
+                        container.style.width = image.width + "px";
+                    if (image.height < container.offsetHeight)
+                        container.style.height = image.height + "px";*/
                 }
 
                 function handleFileDrop(evt) {

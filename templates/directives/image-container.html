@@ -1,4 +1,5 @@
 <div id="pictureContainer" ng-click="selectFile()" ng-class="{imageLoaded : hasImage}">
     <img id="puzzlePicture" ng-src="{{src}}"/>
-    Drop image here or click to select
+    <p class="dropTip" ng-if="!hasImage">Drop image here or click to select</p>
 </div>
+<p class="dropTipBottom" ng-if="hasImage">Click on the image to change it or drop a new file</p>
