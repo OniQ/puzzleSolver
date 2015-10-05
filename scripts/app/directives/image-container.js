@@ -15,14 +15,41 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     fileInput.click();
                 };
 
+                function getMousePos(canvas, evt) {
+                    var rect = canvas.getBoundingClientRect();
+                    return {
+                        x: evt.clientX - rect.left,
+                        y: evt.clientY - rect.top
+                    };
+                }
+                var canvas = document.getElementById('puzzlePicture');
+                var context = canvas.getContext('2d');
+
+                canvas.addEventListener('mousemove', function(evt) {
+                    var mousePos = getMousePos(canvas, evt);
+                    $timeout(function(){
+                        $scope.message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
+                    });
+                }, false);
+
                 function appendFile(image){
                     $scope.src = image.src;
                     $scope.hasImage = true;
-                    var container = document.getElementById("pictureContainer");
-/*                    if (image.width < container.offsetWidth)
-                        container.style.width = image.width + "px";
-                    if (image.height < container.offsetHeight)
-                        container.style.height = image.height + "px";*/
+
+                    canvas.width = image.width;
+                    canvas.height = image.height;
+                    context.drawImage(image,0,0);
+
+                    var imgData = context.getImageData(0,0,canvas.width,canvas.height);
+                    for (var i=0;i<imgData.data.length;i+=4)
+                    {
+                        $scope.pixels.push({
+                            r: imgData.data[i],
+                            g: imgData.data[i+1],
+                            b: imgData.data[i+2],
+                            a: imgData.data[i+3]
+                        });
+                    }
                 }
 
                 function handleFileDrop(evt) {

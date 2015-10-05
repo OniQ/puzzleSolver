@@ -21,7 +21,7 @@ define(['../modules/puzzleControllers'], function(puzzleCtrl){
                 throw new Error('The File APIs are not fully supported in this browser.');
             }
 
-
+            $scope.pixels = [];
 
         }]);
 });
