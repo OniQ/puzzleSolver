@@ -18,8 +18,8 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 function getMousePos(canvas, evt) {
                     var rect = canvas.getBoundingClientRect();
                     return {
-                        x: evt.clientX - rect.left,
-                        y: evt.clientY - rect.top
+                        x: evt.clientX - Math.ceil(rect.left),
+                        y: evt.clientY - Math.ceil(rect.top)
                     };
                 }
                 var canvas = document.getElementById('puzzlePicture');
@@ -27,9 +27,16 @@ define(['puzzleDirectives'], function(puzzleDirectives){
 
                 canvas.addEventListener('mousemove', function(evt) {
                     var mousePos = getMousePos(canvas, evt);
-                    $timeout(function(){
-                        $scope.message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
-                    });
+                    if ($scope.hasImage) {
+                        $timeout(function () {
+                            if (mousePos.x > 0 && mousePos.y > 0) {
+                                $scope.message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
+                                $scope.pixel = $scope.pixels[mousePos.y][mousePos.x];
+                                $scope.hoveredColor["background-color"] = "rgba(" + $scope.pixel.r + "," + $scope.pixel.g +
+                                    "," + $scope.pixel.b + ", " + $scope.pixel.a + ")";
+                            }
+                        });
+                    }
                 }, false);
 
                 function appendFile(image){
@@ -41,9 +48,15 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     context.drawImage(image,0,0);
 
                     var imgData = context.getImageData(0,0,canvas.width,canvas.height);
+                    var w = -1;
                     for (var i=0;i<imgData.data.length;i+=4)
                     {
-                        $scope.pixels.push({
+                        if (i % (canvas.width*4) == 0){
+                            $scope.pixels.push([]);
+                            w++;
+                        }
+
+                        $scope.pixels[w].push({
                             r: imgData.data[i],
                             g: imgData.data[i+1],
                             b: imgData.data[i+2],

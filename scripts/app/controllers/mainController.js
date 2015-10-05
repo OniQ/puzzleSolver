@@ -22,6 +22,7 @@ define(['../modules/puzzleControllers'], function(puzzleCtrl){
             }
 
             $scope.pixels = [];
+            $scope.hoveredColor = {"background-color": "red"}
 
         }]);
 });

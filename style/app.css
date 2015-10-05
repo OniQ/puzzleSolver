@@ -31,3 +31,8 @@
     font-size: large;
     font-family: monospace;
 }
+.colorViewer{
+    width: 50px;
+    height: 50px;
+    border: solid black 1px;
+}

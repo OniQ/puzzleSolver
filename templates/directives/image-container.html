@@ -1,5 +1,6 @@
-<div style="font-size: large">{{pixels[0]}}</div>
-<div>{{message}}</div>
+<div style="font-size: large">{{message}}</div>
+<div class="colorViewer" ng-style="hoveredColor"></div>
+<div style="font-size: large">{{pixel}}</div>
 <div id="pictureContainer" ng-click="selectFile()" ng-class="{imageLoaded : hasImage}">
     <canvas id="puzzlePicture" width="250" height="300"/>
     <p class="dropTip" ng-if="!hasImage">Drop image here or click to select</p>
