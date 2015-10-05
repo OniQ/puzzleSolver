@@ -24,19 +24,22 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 }
                 var canvas = document.getElementById('puzzlePicture');
                 var context = canvas.getContext('2d');
+                context.font = "15px Monospace";
+                context.fillText("Drop image here or click to select",canvas.width/4.5,canvas.height/2);
 
                 canvas.addEventListener('mousemove', function(evt) {
                     var mousePos = getMousePos(canvas, evt);
-                    if ($scope.hasImage) {
+
                         $timeout(function () {
                             if (mousePos.x > 0 && mousePos.y > 0) {
                                 $scope.message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
-                                $scope.pixel = $scope.pixels[mousePos.y][mousePos.x];
-                                $scope.hoveredColor["background-color"] = "rgba(" + $scope.pixel.r + "," + $scope.pixel.g +
-                                    "," + $scope.pixel.b + ", " + $scope.pixel.a + ")";
+                                if ($scope.hasImage) {
+                                    $scope.pixel = $scope.pixels[mousePos.y][mousePos.x];
+                                    $scope.hoveredColor["background-color"] = "rgba(" + $scope.pixel.r + "," + $scope.pixel.g +
+                                        "," + $scope.pixel.b + ", " + $scope.pixel.a + ")";
+                                }
                             }
                         });
-                    }
                 }, false);
 
                 function appendFile(image){

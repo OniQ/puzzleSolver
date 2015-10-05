@@ -2,7 +2,6 @@
 <div class="colorViewer" ng-style="hoveredColor"></div>
 <div style="font-size: large">{{pixel}}</div>
 <div id="pictureContainer" ng-click="selectFile()" ng-class="{imageLoaded : hasImage}">
-    <canvas id="puzzlePicture" width="250" height="300"/>
-    <p class="dropTip" ng-if="!hasImage">Drop image here or click to select</p>
+    <canvas id="puzzlePicture" width="500" height="300"/>
 </div>
 <p class="dropTipBottom" ng-if="hasImage">Click on the image to change it or drop a new file</p>

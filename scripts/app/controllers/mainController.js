@@ -22,7 +22,8 @@ define(['../modules/puzzleControllers'], function(puzzleCtrl){
             }
 
             $scope.pixels = [];
-            $scope.hoveredColor = {"background-color": "red"}
+            $scope.hoveredColor = {"background-color": "white"}
+            $scope.message = 'Mouse position: 0,0'
 
         }]);
 });
