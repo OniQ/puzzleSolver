@@ -1,23 +1,28 @@
 <div style="background-color: azure">
-<div style="font-size: large">{{message}}</div>
-<div style="width: 140px">
-    <div style="float: left;"class="colorViewer" ng-style="hoveredColor">
-        <div style="font-size: large">{{pixel.r}}<br/>{{pixel.g}}<br/>{{pixel.b}}</div>
+    <div style="font-size: large">{{message}}</div>
+    <div style="width: 140px">
+        <div style="float: left;"class="colorViewer" ng-style="hoveredColor">
+            <div style="font-size: large">{{pixel.r}}<br/>{{pixel.g}}<br/>{{pixel.b}}</div>
+        </div>
+        <div style="float: right;" class="colorViewer fixed" ng-style="fixedColor">
+            <div style="font-size: large">{{fixedPixel.r}}<br/>{{fixedPixel.g}}<br/>{{fixedPixel.b}}</div>
+        </div>
     </div>
-    <div style="float: right;" class="colorViewer fixed" ng-style="fixedColor">
-        <div style="font-size: large">{{fixedPixel.r}}<br/>{{fixedPixel.g}}<br/>{{fixedPixel.b}}</div>
+    <div style="font-size: large">Difference:
+        <span ng-class="{error : !pixel.rIsBkg}">{{pixel.rDiff}}</span>
+        <span ng-class="{error : !pixel.gIsBkg}">{{pixel.gDiff}}</span>
+        <span ng-class="{error : !pixel.bIsBkg}">{{pixel.bDiff}}</span>
     </div>
-</div>
-<div style="font-size: large">Difference:
-    <span ng-class="{error : !pixel.rIsBkg}">{{pixel.rDiff}}</span>
-    <span ng-class="{error : !pixel.gIsBkg}">{{pixel.gDiff}}</span>
-    <span ng-class="{error : !pixel.bIsBkg}">{{pixel.bDiff}}</span>
-</div>
-<div>
-    <range-slider name="R" ng-model="rangeR"></range-slider>
-    <range-slider name="G" ng-model="rangeG"></range-slider>
-    <range-slider name="B" ng-model="rangeB"></range-slider>
-    <div style="font-size: large"><input type="checkbox" ng-model="pixel.isBackground" disabled></div>
+    <div>
+        <range-slider name="R" ng-model="rangeR"></range-slider>
+        <range-slider name="G" ng-model="rangeG"></range-slider>
+        <range-slider name="B" ng-model="rangeB"></range-slider>
+        <div style="font-size: large"><input type="checkbox" ng-model="pixel.isBackground" disabled></div>
+        <div class="buttonPanel">
+            <button type="button" ng-click="cutBackground()">Cut background</button>
+            <button type="button" ng-click="restoreBackground()">Restore background</button>
+        </div>
+    </div>
 </div>
 <div id="pictureContainer" ng-click="pictureClicked()" ng-class="{imageLoaded : hasImage}">
     <canvas id="puzzlePicture" width="500" height="300"/>

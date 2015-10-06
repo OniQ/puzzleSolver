@@ -82,6 +82,27 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         });
                 }, false);
 
+                $scope.restoreBackground = function(){
+                    context.putImageData($scope.originalImageData, 0, 0);
+                };
+
+                $scope.cutBackground = function(){
+                    $scope.restoreBackground();
+                    var imgData = context.getImageData(0,0,canvas.width,canvas.height);
+                    for (var i=0;i < imgData.data.length;i+=4) {
+                        var pixel = new Pixel(
+                            imgData.data[i],
+                            imgData.data[i+1],
+                            imgData.data[i+2],
+                            imgData.data[i+3]);
+                        pixel.defineIfBackground($scope.fixedPixel);
+                        if (pixel.isBackground)
+                            imgData.data[i+3] = 0;
+                        delete pixel;
+                    }
+                    context.putImageData(imgData, 0, 0);
+                };
+
                 function appendFile(image){
                     $scope.src = image.src;
                     $scope.hasImage = true;
@@ -90,7 +111,8 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     canvas.height = image.height;
                     context.drawImage(image,0,0);
 
-                    var imgData = context.getImageData(0,0,canvas.width,canvas.height);
+                    $scope.originalImageData = context.getImageData(0,0,canvas.width,canvas.height);
+                    var imgData = $scope.originalImageData;
                     var w = -1;
                     for (var i=0;i<imgData.data.length;i+=4)
                     {

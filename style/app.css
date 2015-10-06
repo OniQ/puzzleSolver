@@ -46,3 +46,10 @@
     position: relative;
     top: 6px;
 }
+.buttonPanel{
+    /*margin: 5px;*/
+}
+
+.buttonPanel button{
+    margin-bottom: 5px;
+}
