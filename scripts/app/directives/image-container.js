@@ -42,6 +42,17 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                                     $scope.pixel = $scope.pixels[mousePos.y][mousePos.x];
                                     $scope.hoveredColor["background-color"] = "rgba(" + $scope.pixel.r + "," + $scope.pixel.g +
                                         "," + $scope.pixel.b + ", " + $scope.pixel.a + ")";
+                                    if ($scope.fixedPixel) {
+                                        $scope.rDiff = $scope.pixel.r - $scope.fixedPixel.r;
+                                        $scope.gDiff = $scope.pixel.g - $scope.fixedPixel.g;
+                                        $scope.bDiff = $scope.pixel.b - $scope.fixedPixel.b;
+                                        $scope.rIsBkg = Math.abs($scope.rDiff) <= $scope.rangeR;
+                                        $scope.gIsBkg = Math.abs($scope.gDiff) <= $scope.rangeG;
+                                        $scope.bIsBkg = Math.abs($scope.bDiff) <= $scope.rangeB;
+                                        $scope.isBackground = $scope.rIsBkg
+                                            && $scope.gIsBkg
+                                            && $scope.bIsBkg
+                                    }
                                 }
                             }
                         });

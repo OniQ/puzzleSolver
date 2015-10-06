@@ -1,16 +1,22 @@
 <div style="background-color: azure">
 <div style="font-size: large">{{message}}</div>
-<div style="width: 120px">
-    <div style="float: left;"class="colorViewer" ng-style="hoveredColor"></div>
-    <div style="float: right;" class="colorViewer fixed" ng-style="fixedColor"></div>
+<div style="width: 140px">
+    <div style="float: left;"class="colorViewer" ng-style="hoveredColor">
+        <div style="font-size: large">{{pixel.r}}<br/>{{pixel.g}}<br/>{{pixel.b}}</div>
+    </div>
+    <div style="float: right;" class="colorViewer fixed" ng-style="fixedColor">
+        <div style="font-size: large">{{fixedPixel.r}}<br/>{{fixedPixel.g}}<br/>{{fixedPixel.b}}</div>
+    </div>
 </div>
-    <div style="font-size: large">{{pixel}}</div>
-    <div style="font-size: large;">{{fixedPixel}}</div>
-
-<div style="font-size: large">Difference: {{pixel.r - fixedPixel.r}} {{pixel.g - fixedPixel.g}} {{pixel.b - fixedPixel.b}}</div>
+<div style="font-size: large">Difference:
+    <span ng-class="{error : !rIsBkg}">{{rDiff}}</span>
+    <span ng-class="{error : !gIsBkg}">{{gDiff}}</span>
+    <span ng-class="{error : !bIsBkg}">{{bDiff}}</span>
+</div>
 R: <input type="range" ng-model="rangeR" value="100">{{rangeR}}
 G: <input type="range" ng-model="rangeG" value="100">{{rangeG}}
 B: <input type="range" ng-model="rangeB" value="100">{{rangeB}}
+    <div style="font-size: large"><input type="checkbox" ng-model="isBackground" disabled></div>
 </div>
 <div id="pictureContainer" ng-click="selectFile()" ng-class="{imageLoaded : hasImage}">
     <canvas id="puzzlePicture" width="500" height="300"/>
