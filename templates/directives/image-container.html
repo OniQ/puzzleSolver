@@ -1,6 +1,17 @@
+<div style="background-color: azure">
 <div style="font-size: large">{{message}}</div>
-<div class="colorViewer" ng-style="hoveredColor"></div>
-<div style="font-size: large">{{pixel}}</div>
+<div style="width: 120px">
+    <div style="float: left;"class="colorViewer" ng-style="hoveredColor"></div>
+    <div style="float: right;" class="colorViewer fixed" ng-style="fixedColor"></div>
+</div>
+    <div style="font-size: large">{{pixel}}</div>
+    <div style="font-size: large;">{{fixedPixel}}</div>
+
+<div style="font-size: large">Difference: {{pixel.r - fixedPixel.r}} {{pixel.g - fixedPixel.g}} {{pixel.b - fixedPixel.b}}</div>
+R: <input type="range" ng-model="rangeR" value="100">{{rangeR}}
+G: <input type="range" ng-model="rangeG" value="100">{{rangeG}}
+B: <input type="range" ng-model="rangeB" value="100">{{rangeB}}
+</div>
 <div id="pictureContainer" ng-click="selectFile()" ng-class="{imageLoaded : hasImage}">
     <canvas id="puzzlePicture" width="500" height="300"/>
 </div>

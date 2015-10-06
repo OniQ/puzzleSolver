@@ -36,3 +36,6 @@
     height: 50px;
     border: solid black 1px;
 }
+.colorViewer.fixed{
+    border-color: mediumaquamarine;
+}

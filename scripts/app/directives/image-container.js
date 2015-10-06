@@ -12,7 +12,12 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 fileInput.id = "fileInput";
 
                 $scope.selectFile = function(){
-                    fileInput.click();
+                    if (!$scope.hasImage)
+                        fileInput.click();
+                    else{
+                        $scope.fixedColor = angular.copy($scope.hoveredColor);
+                        $scope.fixedPixel = angular.copy($scope.pixel);
+                    }
                 };
 
                 function getMousePos(canvas, evt) {
