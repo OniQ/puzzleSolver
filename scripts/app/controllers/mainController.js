@@ -28,12 +28,5 @@ define(['../modules/puzzleControllers'], function(puzzleCtrl){
             $scope.rangeR = 50;
             $scope.rangeG = 50;
             $scope.rangeB = 50;
-            $scope.pixel = {
-                r: 0,
-                g: 0,
-                b: 0,
-                a: 0
-            }
-            $scope.fixedPixel = angular.copy($scope.pixel);
         }]);
 });

@@ -9,16 +9,17 @@
     </div>
 </div>
 <div style="font-size: large">Difference:
-    <span ng-class="{error : !rIsBkg}">{{rDiff}}</span>
-    <span ng-class="{error : !gIsBkg}">{{gDiff}}</span>
-    <span ng-class="{error : !bIsBkg}">{{bDiff}}</span>
+    <span ng-class="{error : !pixel.rIsBkg}">{{pixel.rDiff}}</span>
+    <span ng-class="{error : !pixel.gIsBkg}">{{pixel.gDiff}}</span>
+    <span ng-class="{error : !pixel.bIsBkg}">{{pixel.bDiff}}</span>
 </div>
-R: <input type="range" ng-model="rangeR" value="100">{{rangeR}}
-G: <input type="range" ng-model="rangeG" value="100">{{rangeG}}
-B: <input type="range" ng-model="rangeB" value="100">{{rangeB}}
-    <div style="font-size: large"><input type="checkbox" ng-model="isBackground" disabled></div>
+<div>
+    <range-slider name="R" ng-model="rangeR"></range-slider>
+    <range-slider name="G" ng-model="rangeG"></range-slider>
+    <range-slider name="B" ng-model="rangeB"></range-slider>
+    <div style="font-size: large"><input type="checkbox" ng-model="pixel.isBackground" disabled></div>
 </div>
-<div id="pictureContainer" ng-click="selectFile()" ng-class="{imageLoaded : hasImage}">
+<div id="pictureContainer" ng-click="pictureClicked()" ng-class="{imageLoaded : hasImage}">
     <canvas id="puzzlePicture" width="500" height="300"/>
 </div>
 <p class="dropTipBottom" ng-if="hasImage">Click on the image to change it or drop a new file</p>

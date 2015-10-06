@@ -22,7 +22,10 @@ require.config({
                 'ctrl/mainController',
                 'puzzleDirectives',
                 'puzzleServices',
+                //Directives
                 'app/directives/image-container',
+                'app/directives/range-slider',
+                //Services
                 'app/services/imageManager'
             ]
         }

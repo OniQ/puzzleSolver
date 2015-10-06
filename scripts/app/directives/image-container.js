@@ -11,15 +11,47 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 fileInput.accept = "image/png";
                 fileInput.id = "fileInput";
 
-                $scope.selectFile = function(){
+                function Pixel(r, g, b, a){
+                    this.r = r;
+                    this.g = g;
+                    this.b = b;
+                    this.a = a;
+
+                    this.getColor = function(){
+                        return "rgba(" + this.r + "," + this.g +
+                        "," + this.b + ", " + this.a + ")";
+                    };
+
+                    this.copy = function(){
+                        return angular.copy(this);
+                    };
+
+                    this.defineIfBackground = function(selectedPixel){
+                        if (selectedPixel instanceof (Pixel)){
+                            this.rDiff = this.r - selectedPixel.r;
+                            this.gDiff = this.g - selectedPixel.g;
+                            this.bDiff = this.b - selectedPixel.b;
+                            this.rIsBkg = Math.abs(this.rDiff) <= $scope.rangeR;
+                            this.gIsBkg = Math.abs(this.gDiff) <= $scope.rangeG;
+                            this.bIsBkg = Math.abs(this.bDiff) <= $scope.rangeB;
+                            this.isBackground = this.rIsBkg
+                                && this.gIsBkg
+                                && this.bIsBkg
+                        }
+                    };
+                }
+
+                $scope.pixel = new Pixel(0, 0, 0, 0);
+                $scope.fixedPixel = angular.copy($scope.pixel);
+
+                $scope.pictureClicked = function(){
                     if (!$scope.hasImage)
                         fileInput.click();
                     else{
                         $scope.fixedColor = angular.copy($scope.hoveredColor);
-                        $scope.fixedPixel = angular.copy($scope.pixel);
+                        $scope.fixedPixel = $scope.pixel.copy();
                     }
                 };
-
                 function getMousePos(canvas, evt) {
                     var rect = canvas.getBoundingClientRect();
                     return {
@@ -39,19 +71,11 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                             if (mousePos.x > 0 && mousePos.y > 0) {
                                 $scope.message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
                                 if ($scope.hasImage) {
-                                    $scope.pixel = $scope.pixels[mousePos.y][mousePos.x];
-                                    $scope.hoveredColor["background-color"] = "rgba(" + $scope.pixel.r + "," + $scope.pixel.g +
-                                        "," + $scope.pixel.b + ", " + $scope.pixel.a + ")";
+                                    var pixel = $scope.pixels[mousePos.y][mousePos.x];
+                                    $scope.pixel = new Pixel(pixel.r,pixel.g, pixel.b, pixel.a);
+                                    $scope.hoveredColor["background-color"] = $scope.pixel.getColor();
                                     if ($scope.fixedPixel) {
-                                        $scope.rDiff = $scope.pixel.r - $scope.fixedPixel.r;
-                                        $scope.gDiff = $scope.pixel.g - $scope.fixedPixel.g;
-                                        $scope.bDiff = $scope.pixel.b - $scope.fixedPixel.b;
-                                        $scope.rIsBkg = Math.abs($scope.rDiff) <= $scope.rangeR;
-                                        $scope.gIsBkg = Math.abs($scope.gDiff) <= $scope.rangeG;
-                                        $scope.bIsBkg = Math.abs($scope.bDiff) <= $scope.rangeB;
-                                        $scope.isBackground = $scope.rIsBkg
-                                            && $scope.gIsBkg
-                                            && $scope.bIsBkg
+                                        $scope.pixel.defineIfBackground($scope.fixedPixel);
                                     }
                                 }
                             }
