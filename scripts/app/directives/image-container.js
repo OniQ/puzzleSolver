@@ -17,9 +17,16 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     this.b = b;
                     this.a = a;
 
-                    this.getColor = function(){
+                    this.getColor = function(invert){
+                        if (invert)
+                            return "rgba(" + (255 - this.r) + "," + (255 - this.g) +
+                                "," + (255 - this.b) + ", " + this.a + ")";
                         return "rgba(" + this.r + "," + this.g +
                         "," + this.b + ", " + this.a + ")";
+                    };
+
+                    this.getStyle = function(invert){
+                        return {"color": this.getColor(invert)};
                     };
 
                     this.copy = function(){
@@ -43,6 +50,10 @@ define(['puzzleDirectives'], function(puzzleDirectives){
 
                 $scope.pixel = new Pixel(0, 0, 0, 0);
                 $scope.fixedPixel = angular.copy($scope.pixel);
+
+                $scope.rangeR = 50;
+                $scope.rangeG = 50;
+                $scope.rangeB = 50;
 
                 $scope.pictureClicked = function(){
                     if (!$scope.hasImage)
@@ -83,10 +94,13 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 }, false);
 
                 $scope.restoreBackground = function(){
-                    context.putImageData($scope.originalImageData, 0, 0);
+                    if ($scope.originalImageData)
+                        context.putImageData($scope.originalImageData, 0, 0);
                 };
 
                 $scope.cutBackground = function(){
+                    if (!$scope.hasImage)
+                        return;
                     $scope.restoreBackground();
                     var imgData = context.getImageData(0,0,canvas.width,canvas.height);
                     for (var i=0;i < imgData.data.length;i+=4) {

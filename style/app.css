@@ -35,6 +35,7 @@
     width: 60px;
     height: 60px;
     border: solid black 1px;
+    padding: 10px;
 }
 .colorViewer.fixed{
     border-color: red;
@@ -52,4 +53,7 @@
 
 .buttonPanel button{
     margin-bottom: 5px;
+}
+.colorContainer{
+    width: 180px;
 }

@@ -25,8 +25,5 @@ define(['../modules/puzzleControllers'], function(puzzleCtrl){
             $scope.hoveredColor = {"background-color": "white"}
             $scope.fixedColor = angular.copy($scope.hoveredColor);
             $scope.message = 'Mouse position: 0,0'
-            $scope.rangeR = 50;
-            $scope.rangeG = 50;
-            $scope.rangeB = 50;
         }]);
 });
