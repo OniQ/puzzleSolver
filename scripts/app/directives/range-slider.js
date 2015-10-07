@@ -8,6 +8,12 @@ define(['puzzleDirectives'], function(puzzleDirectives) {
             scope:{
                 model: '=ngModel',
                 name: '@name'
+            },
+            controller: function($scope, $element, $attrs){
+                if (!$attrs.max)
+                    $scope.max = 100;
+                else
+                    $scope.max = $attrs.max;
             }
         }
     });

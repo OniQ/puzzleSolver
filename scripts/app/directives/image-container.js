@@ -56,6 +56,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 $scope.rangeR = 50;
                 $scope.rangeG = 50;
                 $scope.rangeB = 50;
+                $scope.frequency = 50;
 
                 $scope.pictureClicked = function(){
                     if (!$scope.hasImage)
@@ -117,7 +118,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         var q = this.queue[i];
                         $timeout(function(){
                             q.fn.apply(next, q.args);
-                        }, 200).then(
+                        }, $scope.frequency).then(
                             function(){
                                 next.activate(++i);
                             }

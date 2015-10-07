@@ -17,6 +17,8 @@
         <range-slider name="R" ng-model="rangeR" ng-mouseup="cutBackground()"></range-slider>
         <range-slider name="G" ng-model="rangeG" ng-mouseup="cutBackground()"></range-slider>
         <range-slider name="B" ng-model="rangeB" ng-mouseup="cutBackground()"></range-slider>
+        <range-slider name="Frequency" ng-model="frequency" max="1000"></range-slider>
+
         <div style="font-size: large"><input type="checkbox" ng-model="pixel.isBackground" disabled></div>
         <div class="buttonPanel">
             <button type="button" ng-click="cutBackground()">Cut background</button>
