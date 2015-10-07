@@ -94,17 +94,63 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         });
                 }, false);
 
-                $scope.detectPuzzles = function(){
-                    var imgData = context.getImageData(0,0,canvas.width,canvas.height);
-                    for (var i=0;i < imgData.data.length;i+=4) {
+                $scope.processPixel = function(x, y){
+                    var id = context.getImageData(x,y,1,1);
+                    var d  = id.data;
+                    d[0]   = 255;
+                    d[1]   = 0;
+                    d[2]   = 0;
+                    d[3]   = 255;
+                    context.putImageData(id, x, y );
+                };
+
+                function Queue(){
+                    this.queue = [];
+
+                    this.activate = function(i)
+                    {
+                        if (!i)
+                            i = 0;
+                        if (i >= this.queue.length)
+                            return;
+                        var next = this;
+                        var q = this.queue[i];
                         $timeout(function(){
-                            imgData.data[i] = 0;
-                            imgData.data[i+1] = 255;
-                            imgData.data[i+2] = 0;
-                            imgData.data[i+3] = 255;
-                            context.putImageData(imgData, 0, 0);
-                        }, 200);
-                    }
+                            q.fn.apply(next, q.args);
+                        }, 200).then(
+                            function(){
+                                next.activate(++i);
+                            }
+                        );
+                    };
+
+                    this.register = function(fn){
+                        var args = Array.prototype.slice.call(arguments);
+                        args.shift();
+                        this.queue.push({
+                            fn: fn,
+                            args: args
+                        });
+                    };
+                }
+
+                $scope.detectPuzzles = function(){
+                    //var imgData = context.getImageData(0,0,canvas.width,canvas.height);
+                    //for (var i=0;i < imgData.data.length;i+=4) {
+                    //    $timeout(function(){
+                    //        imgData.data[i] = 0;
+                    //        imgData.data[i+1] = 255;
+                    //        imgData.data[i+2] = 0;
+                    //        imgData.data[i+3] = 255;
+                    //        context.putImageData(imgData, 0, 0);
+                    //    }, 200);
+                    //}
+                    var queue = new Queue();
+                    for (var x = 0; x < 10; x++)
+                        for (var y = 0; y < 10; y++){
+                            queue.register($scope.processPixel, x, y);
+                        }
+                    queue.activate();
                 };
 
                 $scope.restoreBackground = function(){
