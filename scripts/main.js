@@ -22,6 +22,8 @@ require.config({
                 'ctrl/mainController',
                 'puzzleDirectives',
                 'puzzleServices',
+                //Libs
+                'lib/underscore-min',
                 //Directives
                 'app/directives/image-container',
                 'app/directives/range-slider',
