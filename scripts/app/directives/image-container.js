@@ -98,8 +98,8 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 $scope.processPixel = function(x, y){
                     var id = context.getImageData(x,y,1,1);
                     var d  = id.data;
-                    d[0]   = 255;
-                    d[1]   = 0;
+                    d[0]   = 0;
+                    d[1]   = 255;
                     d[2]   = 0;
                     d[3]   = 255;
                     context.putImageData(id, x, y );
@@ -136,7 +136,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 }
 
                 $scope.detectPuzzles = function(){
-                    //var imgData = context.getImageData(0,0,canvas.width,canvas.height);
+                    //var imgData = context.getImageData(0,0,canvas.width,canvas.height);1
                     //for (var i=0;i < imgData.data.length;i+=4) {
                     //    $timeout(function(){
                     //        imgData.data[i] = 0;
@@ -147,8 +147,8 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     //    }, 200);
                     //}
                     var queue = new Queue();
-                    for (var x = 0; x < 10; x++)
-                        for (var y = 0; y < 10; y++){
+                    for (var y = 0; y < $scope.pixels.length; y++)
+                        for (var x = 0; x < $scope.pixels[y].length; x++){
                             queue.register($scope.processPixel, x, y);
                         }
                     queue.activate();
