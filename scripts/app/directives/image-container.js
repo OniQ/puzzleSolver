@@ -11,11 +11,13 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 fileInput.accept = "image/png";
                 fileInput.id = "fileInput";
 
-                function Pixel(r, g, b, a, i){
+                function Pixel(r, g, b, a, x, y, i){
                     this.r = r;
                     this.g = g;
                     this.b = b;
                     this.a = a;
+                    this.x = x;
+                    this.y = y;
                     this.i = i;
 
                     this.getColor = function(invert){
@@ -86,13 +88,13 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         $timeout(function () {
                             if (mousePos.x > 0 && mousePos.y > 0) {
                                 $scope.message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
-                                if ($scope.hasImage) {
+                                /*if ($scope.hasImage) {
                                     $scope.pixel = $scope.pixels[mousePos.y][mousePos.x];
                                     $scope.hoveredColor["background-color"] = $scope.pixel.getColor();
                                     if ($scope.fixedPixel) {
                                         $scope.pixel.defineIfBackground($scope.fixedPixel);
                                     }
-                                }
+                                }*/
                             }
                         });
                 }, false);
@@ -127,7 +129,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     };
                 }
 
-                $scope.puzzles = []
+                $scope.puzzles = [];
                 $scope.p = 0;
 
                 $scope.processPixel = function(x, y){
@@ -140,11 +142,29 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     d[2]   = 0;
                     d[3]   = 255;
 
+                    if (x == 0)
+                        $scope.p = 0;
+
+                    var isObject = false;
                     if (!pixel.isBackground){
+                        isObject = true;
+                        if (!$scope.puzzles[$scope.p])
+                            $scope.puzzles[$scope.p] = [];
+                        //if (pixelis arti esamo objekto) use any
+                        while (!_.any($scope.puzzles[$scope.p], function(p){ pixel.getDistance(p) <= 1 })){
+                            if (!$scope.puzzles[$scope.p+1])
+                                break;
+                            $scope.p++
+                        }
+                        $scope.puzzles[$scope.p].push(pixel);
                         d[1]   = 0;
                         d[2]   = 255;
                     }
 
+                    if ($scope.wasObject && !isObject)
+                        $scope.p++;
+
+                    $scope.wasObject = isObject;
                     context.putImageData(id, x, y );
                 };
 
@@ -182,8 +202,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                             imgData.data[i],
                             imgData.data[i+1],
                             imgData.data[i+2],
-                            imgData.data[i+3],
-                        i);
+                            imgData.data[i+3]);
                         pixel.defineIfBackground($scope.fixedPixel);
                         if (pixel.isBackground)
                             imgData.data[i+3] = 0;
@@ -202,19 +221,23 @@ define(['puzzleDirectives'], function(puzzleDirectives){
 
                     $scope.originalImageData = context.getImageData(0,0,canvas.width,canvas.height);
                     var imgData = $scope.originalImageData;
-                    var w = -1;
+                    var y = -1;
+                    var x = -1;
                     for (var i=0;i<imgData.data.length;i+=4)
                     {
+                        x++;
                         if (i % (canvas.width*4) == 0){
                             $scope.pixels.push([]);
-                            w++;
+                            y++;
+                            x = 0;
                         }
 
-                        $scope.pixels[w].push(new Pixel(
+                        $scope.pixels[y].push(new Pixel(
                             imgData.data[i],
                             imgData.data[i+1],
                             imgData.data[i+2],
                             imgData.data[i+3],
+                            x, y,
                             i)
                         );
                     }
