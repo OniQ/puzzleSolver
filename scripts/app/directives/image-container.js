@@ -31,7 +31,9 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     };
 
                     this.defineIfBackground = function(selectedPixel){
-                        if (selectedPixel instanceof (Pixel)){
+                        this.isBackground  = (this.r == 255 && this.g == 255 && this.b == 255);
+
+                        /*if (selectedPixel instanceof (Pixel)){
                             this.rDiff = this.r - selectedPixel.r;
                             this.gDiff = this.g - selectedPixel.g;
                             this.bDiff = this.b - selectedPixel.b;
@@ -41,7 +43,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                             this.isBackground = this.rIsBkg
                                 && this.gIsBkg
                                 && this.bIsBkg
-                        }
+                        }*/
                     };
 
                     this.getDistance = function(pixel){
@@ -95,16 +97,6 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         });
                 }, false);
 
-                $scope.processPixel = function(x, y){
-                    var id = context.getImageData(x,y,1,1);
-                    var d  = id.data;
-                    d[0]   = 0;
-                    d[1]   = 255;
-                    d[2]   = 0;
-                    d[3]   = 255;
-                    context.putImageData(id, x, y );
-                };
-
                 function Queue(){
                     this.queue = [];
 
@@ -134,6 +126,27 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         });
                     };
                 }
+
+                $scope.puzzles = []
+                $scope.p = 0;
+
+                $scope.processPixel = function(x, y){
+                    var id = context.createImageData(1,1);
+                    var d  = id.data;
+                    var pixel = $scope.pixels[y][x];
+                    pixel.defineIfBackground();
+                    d[0]   = 0;
+                    d[1]   = 255;
+                    d[2]   = 0;
+                    d[3]   = 255;
+
+                    if (!pixel.isBackground){
+                        d[1]   = 0;
+                        d[2]   = 255;
+                    }
+
+                    context.putImageData(id, x, y );
+                };
 
                 $scope.detectPuzzles = function(){
                     //var imgData = context.getImageData(0,0,canvas.width,canvas.height);1

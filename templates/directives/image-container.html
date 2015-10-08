@@ -18,6 +18,7 @@
         <range-slider name="G" ng-model="rangeG" ng-mouseup="cutBackground()"></range-slider>
         <range-slider name="B" ng-model="rangeB" ng-mouseup="cutBackground()"></range-slider>
         <range-slider name="Frequency" ng-model="frequency" max="1000"></range-slider>
+        <range-slider name="Canvassize" ng-init="cw = 400" ng-model="cw" max="1000"></range-slider>
 
         <div style="font-size: large"><input type="checkbox" ng-model="pixel.isBackground" disabled></div>
         <div class="buttonPanel">
@@ -28,6 +29,6 @@
     </div>
 </div>
 <div id="pictureContainer" ng-click="pictureClicked()" ng-class="{imageLoaded : hasImage}">
-    <canvas id="puzzlePicture" width="500" height="300"/>
+    <canvas id="puzzlePicture" width="500" height="300" ng-style="{'width': cwpx}"/>
 </div>
 <p class="dropTipBottom" ng-if="hasImage">Click on the image to change it or drop a new file</p>
