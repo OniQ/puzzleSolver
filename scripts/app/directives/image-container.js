@@ -106,8 +106,14 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     {
                         if (!i)
                             i = 0;
-                        if (i >= this.queue.length)
+                        if (i >= this.queue.length) {
+                            //end of queue
+                            console.log($scope.puzzles.length);
+                            for (var puzzle in $scope.puzzles){
+                                console.log($scope.puzzles[puzzle]);
+                            }
                             return;
+                        }
                         var next = this;
                         var q = this.queue[i];
                         $timeout(function(){
@@ -131,6 +137,11 @@ define(['puzzleDirectives'], function(puzzleDirectives){
 
                 $scope.puzzles = [];
                 $scope.p = 0;
+                $scope.colors = [];
+
+                function getRandomInt(min, max) {
+                    return Math.floor(Math.random() * (max - min)) + min;
+                }
 
                 $scope.processPixel = function(x, y){
                     var id = context.createImageData(1,1);
@@ -146,23 +157,49 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         $scope.p = 0;
 
                     var isObject = false;
-                    if (!pixel.isBackground){
+
+                    if (!pixel.isBackground) {
                         isObject = true;
-                        if (!$scope.puzzles[$scope.p])
+                        if (!$scope.puzzles[$scope.p]) {
+                            //new object
+                            $scope.colors.push({
+                                r: getRandomInt(0, 255),
+                                g: getRandomInt(0, 255),
+                                b: getRandomInt(0, 255)
+                            });
                             $scope.puzzles[$scope.p] = [];
-                        //if (pixelis arti esamo objekto) use any
-                        while (!_.any($scope.puzzles[$scope.p], function(p){ pixel.getDistance(p) <= 1 })){
-                            if (!$scope.puzzles[$scope.p+1])
-                                break;
-                            $scope.p++
                         }
+                        $scope.p = 0;
+                        while ($scope.puzzles[$scope.p].length > 1) {
+                            if (_.any($scope.puzzles[$scope.p], function (p) {
+                                    var dist = pixel.getDistance(p);
+                                    return dist <= 2;
+                                }))
+                            {
+                                d[0] = $scope.colors[$scope.p].r;
+                                d[1] = $scope.colors[$scope.p].g;
+                                d[2] = $scope.colors[$scope.p].b;
+                                break;
+                            }
+                            if (!$scope.puzzles[$scope.p+1]){
+                                //new object
+                                $scope.colors.push({
+                                    r: getRandomInt(0, 255),
+                                    g: getRandomInt(0, 255),
+                                    b: getRandomInt(0, 255)
+                                });
+                                $scope.p++;
+                                $scope.puzzles[$scope.p] = [];
+                                break;
+                            }
+                            $scope.p++;
+                        }
+
                         $scope.puzzles[$scope.p].push(pixel);
-                        d[1]   = 0;
-                        d[2]   = 255;
                     }
 
-                    if ($scope.wasObject && !isObject)
-                        $scope.p++;
+                    //if ($scope.wasObject && !isObject)
+                    //    $scope.p++;
 
                     $scope.wasObject = isObject;
                     context.putImageData(id, x, y );
