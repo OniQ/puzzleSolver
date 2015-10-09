@@ -108,6 +108,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                             i = 0;
                         if (i >= this.queue.length) {
                             //end of queue
+                            $scope.$broadcast('queue-end');
                             console.log($scope.puzzles.length);
                             for (var puzzle in $scope.puzzles){
                                 console.log($scope.puzzles[puzzle]);
@@ -156,10 +157,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     if (x == 0)
                         $scope.p = 0;
 
-                    var isObject = false;
-
                     if (!pixel.isBackground) {
-                        isObject = true;
                         if (!$scope.puzzles[$scope.p]) {
                             //new object
                             $scope.colors.push({
@@ -173,7 +171,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         while ($scope.puzzles[$scope.p].length > 1) {
                             if (_.any($scope.puzzles[$scope.p], function (p) {
                                     var dist = pixel.getDistance(p);
-                                    return dist <= 2;
+                                    return dist <= $scope.maxDist;
                                 }))
                             {
                                 d[0] = $scope.colors[$scope.p].r;
@@ -197,11 +195,6 @@ define(['puzzleDirectives'], function(puzzleDirectives){
 
                         $scope.puzzles[$scope.p].push(pixel);
                     }
-
-                    //if ($scope.wasObject && !isObject)
-                    //    $scope.p++;
-
-                    $scope.wasObject = isObject;
                     context.putImageData(id, x, y );
                 };
 
@@ -223,6 +216,18 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         }
                     queue.activate();
                 };
+
+                $scope.$on('queue-end', function(){
+                    for (var i = 0; i <  $scope.puzzles.length - 1; i++){
+                        for (var p = 0; p <  $scope.puzzles[i].length - 1; p++){
+                            var puzzle = $scope.puzzles[p];
+                            for (var puz = 0; puz < puzzle.length - 1; puz++) {
+                                console.log('(' + puzzle[puz].x + ';' + puzzle[puz].y + ')');
+                            }
+                        }
+                        console.log('------------------------');
+                    }
+                });
 
                 $scope.restoreBackground = function(){
                     if ($scope.originalImageData)

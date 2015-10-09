@@ -18,7 +18,9 @@
         <range-slider name="G" ng-model="rangeG" ng-mouseup="cutBackground()"></range-slider>
         <range-slider name="B" ng-model="rangeB" ng-mouseup="cutBackground()"></range-slider>
         <range-slider name="Frequency" ng-model="frequency" max="1000"></range-slider>
-        <range-slider name="Canvassize" ng-init="cw = 400" ng-model="cw" max="1000"></range-slider>
+        <range-slider name="Canvas size" ng-init="cw = 400" ng-model="cw" max="1000"></range-slider>
+        <range-slider name="Max dist" ng-init="maxDist = 2" ng-model="maxDist" max="20"></range-slider>
+
 
         <div style="font-size: large"><input type="checkbox" ng-model="pixel.isBackground" disabled></div>
         <div class="buttonPanel">
