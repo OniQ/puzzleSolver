@@ -217,15 +217,85 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     queue.activate();
                 };
 
+                function Color(r, g, b, a){
+                    this.r = r;
+                    this.b = b;
+                    this.g = g;
+                    this.a = 255;
+                    if (a)
+                        this.a = a;
+                }
+
+                var COLOR_RED = new Color(255, 0, 0);
+                var COLOR_GREEN = new Color(0, 255, 0);
+                var COLOR_BLUE = new Color(0, 0, 255);
+
+                $scope.writePixel = function(pixel, color){
+                    var id = context.createImageData(1,1);
+                    var d  = id.data;
+                    var _color = pixel;
+                    if (color)
+                        _color = color;
+                    d[0]   = _color.r;
+                    d[1]   = _color.g;
+                    d[2]   = _color.b;
+                    d[3]   = _color.a;
+                    context.putImageData(id, pixel.x, pixel.y);
+                };
+
                 $scope.$on('queue-end', function(){
                     for (var i = 0; i <  $scope.puzzles.length - 1; i++){
-                        for (var p = 0; p <  $scope.puzzles[i].length - 1; p++){
-                            var puzzle = $scope.puzzles[p];
-                            for (var puz = 0; puz < puzzle.length - 1; puz++) {
-                                console.log('(' + puzzle[puz].x + ';' + puzzle[puz].y + ')');
-                            }
+                        var puzzle = $scope.puzzles[i];
+                        for (var p = 0; p <  puzzle.length - 1; p++){
+                            var pixel = $scope.puzzles[i][p];
+                            console.log('(' + pixel.x + ';' + pixel.y + ')');
                         }
-                        console.log('------------------------');
+                        var sortedX = _.sortBy(puzzle, 'x');
+                        var minX = _.min(sortedX, function(p){return p.x;});
+                        var maxX = _.max(sortedX, function(p){return p.x;});
+
+                        var sortedY = _.sortBy(puzzle, 'y');
+                        var minY = _.min(sortedY, function(p){return p.y;});
+                        var maxY = _.max(sortedY, function(p){return p.y;});
+
+                        var minXA = _.select (sortedX, function(p){return p.x == minX.x});
+                        var maxXA = _.select (sortedX, function(p){return p.x == maxX.x});
+
+                        var minYA = _.select (sortedY, function(p){return p.y == minY.y;});
+                        var maxYA = _.select (sortedY, function(p){return p.y == maxY.y;});
+
+                        for (var i = 0; i < minXA.length-1;i++){
+                            $scope.writePixel(minXA[i], new Color(255, 255, 255, 255));
+                        }
+
+                        for (var i = 0; i < maxXA.length-1;i++){
+                            $scope.writePixel(maxXA[i], new Color(0, 0, 0, 255));
+                        }
+
+                        for (var i = 0; i < minYA.length-1;i++){
+                            $scope.writePixel(minYA[i], new Color(255, 0, 0, 255));
+                        }
+
+                        for (var i = 0; i < maxYA.length-1;i++){
+                            $scope.writePixel(maxYA[i], new Color(0, 0, 255, 255));
+                        }
+
+                        var sortedXY = _.sortBy(minXA, 'y');
+                        var topLeft = _.first(sortedXY); //ok
+
+                        var sortedXYMax = _.sortBy(maxXA, 'y');
+                        var topRight =_.last(sortedXYMax); //ok
+
+                        var sortedYA = _.sortBy(minYA, 'x');
+                        var bottomLeft = _.first(sortedYA);
+
+                        var sortedYAMax = _.sortBy(maxYA, 'x');
+                        var bottomRight =_.last(sortedYAMax);
+                        //color corners
+                        $scope.writePixel(topLeft, COLOR_RED);
+                        $scope.writePixel(topRight, COLOR_RED);
+                        $scope.writePixel(bottomLeft, COLOR_RED);
+                        $scope.writePixel(bottomRight, COLOR_RED);
                     }
                 });
 
