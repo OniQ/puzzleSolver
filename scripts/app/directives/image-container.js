@@ -47,9 +47,9 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     };
 
                     this.defineIfBackground = function(selectedPixel){
-                        this.isBackground  = (this.r == 255 && this.g == 255 && this.b == 255);
+                        //this.isBackground  = (this.r == 255 && this.g == 255 && this.b == 255);
 
-                        /*if (selectedPixel instanceof (Pixel)){
+                        if (selectedPixel instanceof (Pixel)){
                             this.rDiff = this.r - selectedPixel.r;
                             this.gDiff = this.g - selectedPixel.g;
                             this.bDiff = this.b - selectedPixel.b;
@@ -59,7 +59,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                             this.isBackground = this.rIsBkg
                                 && this.gIsBkg
                                 && this.bIsBkg
-                        }*/
+                        }
                     };
 
                     this.getDistance = function(pixel){
@@ -90,13 +90,13 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         $timeout(function () {
                             if (mousePos.x > 0 && mousePos.y > 0) {
                                 $scope.message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
-                                /*if ($scope.hasImage) {
+                                if ($scope.hasImage) {
                                     $scope.pixel = $scope.pixels[mousePos.y][mousePos.x];
                                     $scope.hoveredColor["background-color"] = $scope.pixel.getColor();
                                     if ($scope.fixedPixel) {
                                         $scope.pixel.defineIfBackground($scope.fixedPixel);
                                     }
-                                }*/
+                                }
                             }
                         });
                 }, false);
@@ -147,26 +147,12 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 }
 
                 $scope.processPixel = function(x, y){
-                    //var id = context.createImageData(1,1);
-                    //var d  = id.data;
                     var pixel = $scope.pixels[y][x];
                     pixel.defineIfBackground();
-                    //d[0]   = 0;
-                    //d[1]   = 255;
-                    //d[2]   = 0;
-                    //d[3]   = 255;
-
-                    if (x == 0)
-                        $scope.p = 0;
 
                     if (!pixel.isBackground) {
                         if (!$scope.puzzles[$scope.p]) {
                             //new object
-                            $scope.colors.push({
-                                r: getRandomInt(0, 255),
-                                g: getRandomInt(0, 255),
-                                b: getRandomInt(0, 255)
-                            });
                             $scope.puzzles[$scope.p] = [];
                         }
                         $scope.p = 0;
@@ -176,18 +162,10 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                                     return dist <= $scope.maxDist;
                                 }))
                             {
-                                //d[0] = $scope.colors[$scope.p].r;
-                                //d[1] = $scope.colors[$scope.p].g;
-                                //d[2] = $scope.colors[$scope.p].b;
                                 break;
                             }
                             if (!$scope.puzzles[$scope.p+1]){
                                 //new object
-                                $scope.colors.push({
-                                    r: getRandomInt(0, 255),
-                                    g: getRandomInt(0, 255),
-                                    b: getRandomInt(0, 255)
-                                });
                                 $scope.p++;
                                 $scope.puzzles[$scope.p] = [];
                                 break;
@@ -240,19 +218,17 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     var _color = pixel;
                     if (color)
                         _color = color;
-                    d[0]   = _color.r;
-                    d[1]   = _color.g;
-                    d[2]   = _color.b;
-                    d[3]   = _color.a;
+                    d[0] = _color.r;
+                    d[1] = _color.g;
+                    d[2] = _color.b;
+                    d[3] = _color.a;
                     context.putImageData(id, pixel.x, pixel.y);
                 };
 
                 $scope.$on('queue-end', function(){
-                    for (var i = 0; i <  $scope.puzzles.length - 1; i++){
+                    for (var i = 0; i <  $scope.puzzles.length; i++){
                         var puzzle = $scope.puzzles[i];
-                        for (var p = 0; p <  puzzle.length - 1; p++){
-                            var pixel = $scope.puzzles[i][p];
-                        }
+
                         var sortedX = _.sortBy(puzzle, 'x');
                         var minX = _.min(sortedX, function(p){return p.x;});
                         var maxX = _.max(sortedX, function(p){return p.x;});
@@ -267,26 +243,15 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         var minYA = _.select (sortedY, function(p){return p.y == minY.y;});
                         var maxYA = _.select (sortedY, function(p){return p.y == maxY.y;});
 
-
-                        var sortedXY = _.sortBy(minXA, 'y');
-                        var topLeft = _.last(sortedXY);
-
-                        var sortedXYMax = _.sortBy(maxXA, 'y');
-                        var topRight =_.first(sortedXYMax);
-
-                        var sortedYA = _.sortBy(minYA, 'x');
-                        var bottomLeft = _.first(sortedYA);
-
-                        var sortedYAMax = _.sortBy(maxYA, 'x');
-                        var bottomRight =_.last(sortedYAMax);
+                        var bottomLeft = _.last(_.sortBy(minXA, 'y'));
+                        var topRight  =_.first(_.sortBy(maxXA, 'y'));
+                        var topLeft = _.first(_.sortBy(minYA, 'x'));
+                        var bottomRight  =_.last(_.sortBy(maxYA, 'x'));
                         //color corners
-                        $scope.writePixel(topLeft, COLOR_YELLOW);
-                        //pink
+                        $scope.writePixel(bottomRight, COLOR_YELLOW);
                         $scope.writePixel(topRight, new Color(255,20,147));
-                        //purple
-                        $scope.writePixel(bottomLeft, new Color(131, 27, 142));
-                        //orange
-                        $scope.writePixel(bottomRight, new Color(255, 153, 51));
+                        $scope.writePixel(topLeft, new Color(131, 27, 142));
+                        $scope.writePixel(bottomLeft, new Color(255, 153, 51));
                     }
                 });
 
