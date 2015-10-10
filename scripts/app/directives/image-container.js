@@ -154,7 +154,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     if (x == 0)
                         $scope.p = 0;
 
-                    if (pixel.a == 0) {
+                    if (pixel.a != 0) {
                         if (!$scope.puzzles[$scope.p]) {
                             //new object
                             $scope.colors.push({
