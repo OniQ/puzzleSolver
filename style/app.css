@@ -1,3 +1,6 @@
+.puzzleSolverStyle{
+    font-family: monospace;
+}
 #pictureContainer{
     width: 500px;
     height: 300px;
@@ -56,4 +59,18 @@
 }
 .colorContainer{
     width: 180px;
+}
+.rangeContainer{
+    width: 300px;
+    float:left;
+    margin-left: 20px;
+    position: relative;
+    top: -10px;
+}
+#logArea{
+    background-color: #84ff50;
+    color: crimson;
+    height: 70px;
+    overflow: auto;
+    width: 600px;
 }

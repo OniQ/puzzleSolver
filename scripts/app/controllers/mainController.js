@@ -5,8 +5,8 @@
  * Created by OniQ on 20/04/15.
  */
 define(['../modules/puzzleControllers'], function(puzzleCtrl){
-    puzzleCtrl.controller('mainController', ['$scope',
-        function ($scope) {
+    puzzleCtrl.controller('mainController', ['$scope', 'logService',
+        function ($scope, logService) {
             /*var littleEndian = (function() {
                 var buffer = new ArrayBuffer(2);
                 new DataView(buffer).setInt16(0, 256, true);

@@ -27,8 +27,10 @@ require.config({
                 //Directives
                 'app/directives/image-container',
                 'app/directives/range-slider',
+                'app/directives/logger',
                 //Services
-                'app/services/imageManager'
+                'app/services/imageManager',
+                'app/services/logService'
             ]
         }
     }

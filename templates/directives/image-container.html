@@ -1,26 +1,31 @@
 <div style="background-color: azure">
     <div style="font-size: large">{{message}}</div>
-    <div class="colorContainer">
-        <div style="float: left;"class="colorViewer" ng-style="hoveredColor">
-            <div style="font-size: large" ng-style="{'color': pixel.getColor(true)}">{{pixel.r}}<br/>{{pixel.g}}<br/>{{pixel.b}}</div>
+
+    <div style="display: inline-block">
+        <div class="colorContainer" style="float: left;">
+            <div style="float: left;" class="colorViewer" ng-style="hoveredColor">
+                <div style="font-size: large" ng-style="{'color': pixel.getColor(true)}">{{pixel.r}}<br/>{{pixel.g}}<br/>{{pixel.b}}</div>
+            </div>
+            <div style="float: right;" class="colorViewer fixed" ng-style="fixedColor">
+                <div style="font-size: large" ng-style="{'color': fixedPixel.getColor(true)}">{{fixedPixel.r}}<br/>{{fixedPixel.g}}<br/>{{fixedPixel.b}}</div>
+            </div>
         </div>
-        <div style="float: right;" class="colorViewer fixed" ng-style="fixedColor">
-            <div style="font-size: large" ng-style="{'color': fixedPixel.getColor(true)}">{{fixedPixel.r}}<br/>{{fixedPixel.g}}<br/>{{fixedPixel.b}}</div>
+        <div class="rangeContainer">
+            <range-slider name="R" ng-model="rangeR" ng-mouseup="cutBackground()"></range-slider>
+            <range-slider name="G" ng-model="rangeG" ng-mouseup="cutBackground()"></range-slider>
+            <range-slider name="B" ng-model="rangeB" ng-mouseup="cutBackground()"></range-slider>
+            <range-slider name="Frequency" ng-model="frequency" max="1000"></range-slider>
+            <range-slider name="Canvas size" ng-init="cw = 400" ng-model="cw" max="1000"></range-slider>
+            <range-slider name="Max dist" ng-init="maxDist = 15" ng-model="maxDist" max="20"></range-slider>
         </div>
     </div>
-    <div style="font-size: large">Difference:
+
+    <div style="font-size: large;">Difference:
         <span ng-class="{error : !pixel.rIsBkg}">{{pixel.rDiff}}</span>
         <span ng-class="{error : !pixel.gIsBkg}">{{pixel.gDiff}}</span>
         <span ng-class="{error : !pixel.bIsBkg}">{{pixel.bDiff}}</span>
     </div>
     <div>
-        <range-slider name="R" ng-model="rangeR" ng-mouseup="cutBackground()"></range-slider>
-        <range-slider name="G" ng-model="rangeG" ng-mouseup="cutBackground()"></range-slider>
-        <range-slider name="B" ng-model="rangeB" ng-mouseup="cutBackground()"></range-slider>
-        <range-slider name="Frequency" ng-model="frequency" max="1000"></range-slider>
-        <range-slider name="Canvas size" ng-init="cw = 400" ng-model="cw" max="1000"></range-slider>
-        <range-slider name="Max dist" ng-init="maxDist = 2" ng-model="maxDist" max="20"></range-slider>
-
 
         <div style="font-size: large"><input type="checkbox" ng-model="pixel.isBackground" disabled></div>
         <div class="buttonPanel">
@@ -30,10 +35,8 @@
         </div>
     </div>
 </div>
+<logger></logger>
 <div id="pictureContainer" ng-click="pictureClicked()" ng-class="{imageLoaded : hasImage}">
     <canvas id="puzzlePicture" width="500" height="300"/>
 </div>
-{{p}}
 <p class="dropTipBottom" ng-if="hasImage">Click on the image to change it or drop a new file</p>
-{{wasObject}}
-<p>Not any: {{notAny}}</p>

@@ -2,7 +2,7 @@
  * Created by OniQ on 04/10/15.
  */
 define(['puzzleDirectives'], function(puzzleDirectives){
-    puzzleDirectives.directive('imageContainer', function($timeout, imageManager) {
+    puzzleDirectives.directive('imageContainer', function($timeout, imageManager, logService) {
         return {
             templateUrl: "templates/directives/image-container.html",
             controller: function ($scope, $element, $attrs) {
@@ -17,7 +17,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 context.font = "15px Monospace";
                 context.fillText("Drop image here or click to select",canvas.width/4.5,canvas.height/2);
 
-                $scope.pixel = new Pixel(0, 0, 0, 0);
+                $scope.pixel = new Pixel(255, 255, 255, 255);
                 $scope.fixedPixel = angular.copy($scope.pixel);
 
                 $scope.rangeR = 50;
@@ -147,12 +147,21 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 }
 
                 $scope.processPixel = function(x, y){
+                    var id = context.createImageData(1,1);
+                    var d  = id.data;
                     var pixel = $scope.pixels[y][x];
                     pixel.defineIfBackground();
+                    if (x == 0)
+                        $scope.p = 0;
 
-                    if (!pixel.isBackground) {
+                    if (pixel.a == 0) {
                         if (!$scope.puzzles[$scope.p]) {
                             //new object
+                            $scope.colors.push({
+                                r: getRandomInt(0, 255),
+                                g: getRandomInt(0, 255),
+                                b: getRandomInt(0, 255)
+                            });
                             $scope.puzzles[$scope.p] = [];
                         }
                         $scope.p = 0;
@@ -162,10 +171,19 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                                     return dist <= $scope.maxDist;
                                 }))
                             {
+                                d[0] = $scope.colors[$scope.p].r;
+                                d[1] = $scope.colors[$scope.p].g;
+                                d[2] = $scope.colors[$scope.p].b;
+                                d[3] = 255;
                                 break;
                             }
                             if (!$scope.puzzles[$scope.p+1]){
                                 //new object
+                                $scope.colors.push({
+                                    r: getRandomInt(0, 255),
+                                    g: getRandomInt(0, 255),
+                                    b: getRandomInt(0, 255)
+                                });
                                 $scope.p++;
                                 $scope.puzzles[$scope.p] = [];
                                 break;
@@ -174,28 +192,23 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         }
 
                         $scope.puzzles[$scope.p].push(pixel);
+                        context.putImageData(id, x, y );
                     }
-                    //context.putImageData(id, x, y );
                 };
 
                 $scope.detectPuzzles = function(){
-                    //var imgData = context.getImageData(0,0,canvas.width,canvas.height);1
-                    //for (var i=0;i < imgData.data.length;i+=4) {
-                    //    $timeout(function(){
-                    //        imgData.data[i] = 0;
-                    //        imgData.data[i+1] = 255;
-                    //        imgData.data[i+2] = 0;
-                    //        imgData.data[i+3] = 255;
-                    //        context.putImageData(imgData, 0, 0);
-                    //    }, 200);
-                    //}
-                    var queue = new Queue();
-                    for (var y = 0; y < $scope.pixels.length; y++)
-                        for (var x = 0; x < $scope.pixels[y].length; x++){
-                            //queue.register($scope.processPixel, x, y);
-                            $scope.processPixel(x, y);
-                        }
-                    queue.activate();
+                    $scope.cutBackground();
+                    logService.log('Begin of puzzle detect');
+                    $timeout(function () {
+                        var queue = new Queue();
+                        for (var y = 0; y < $scope.pixels.length; y++)
+                            for (var x = 0; x < $scope.pixels[y].length; x++) {
+                                //queue.register($scope.processPixel, x, y);
+                                $scope.processPixel(x, y);
+                            }
+                        queue.activate();
+                        logService.log('End of puzzle detect')
+                    });
                 };
 
                 function Color(r, g, b, a){
@@ -218,10 +231,10 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     var _color = pixel;
                     if (color)
                         _color = color;
-                    d[0] = _color.r;
-                    d[1] = _color.g;
-                    d[2] = _color.b;
-                    d[3] = _color.a;
+                    d[0]   = _color.r;
+                    d[1]   = _color.g;
+                    d[2]   = _color.b;
+                    d[3]   = _color.a;
                     context.putImageData(id, pixel.x, pixel.y);
                 };
 
@@ -243,6 +256,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         var minYA = _.select (sortedY, function(p){return p.y == minY.y;});
                         var maxYA = _.select (sortedY, function(p){return p.y == maxY.y;});
 
+
                         var bottomLeft = _.last(_.sortBy(minXA, 'y'));
                         var topRight  =_.first(_.sortBy(maxXA, 'y'));
                         var topLeft = _.first(_.sortBy(minYA, 'x'));
@@ -260,21 +274,47 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         context.putImageData($scope.originalImageData, 0, 0);
                 };
 
+                $scope.iterateOverPixels = function(action){
+                    for (var y = 0; y < $scope.pixels.length; y++)
+                        for (var x = 0; x < $scope.pixels[y].length; x++) {
+                            var pixel = $scope.pixels[y][x];
+                            action(pixel);
+                        }
+                };
+
                 $scope.cutBackground = function(){
                     if (!$scope.hasImage)
                         return;
                     $scope.restoreBackground();
-                    var imgData = context.getImageData(0,0,canvas.width,canvas.height);
-                    for (var i=0;i < imgData.data.length;i+=4) {
-                        var pixel = new Pixel(
-                            imgData.data[i],
-                            imgData.data[i+1],
-                            imgData.data[i+2],
-                            imgData.data[i+3]);
+                    $scope.iterateOverPixels(function(pixel){
                         pixel.defineIfBackground($scope.fixedPixel);
                         if (pixel.isBackground)
-                            imgData.data[i+3] = 0;
-                        delete pixel;
+                            pixel.a = 0
+                    });
+                    $scope.writePixels();
+                };
+
+                $scope.writePixels = function(){
+                    var imgData = context.getImageData(0,0,canvas.width,canvas.height);
+                    var d = imgData.data;
+                    var x = 0, y = 0;
+                    for (var i = 0;i < imgData.data.length;i+=4, x++) {
+                        if (x >= $scope.pixels[y].length){
+                            y++;
+                            x = 0;
+                        }
+                        try {
+                            var pixel = $scope.pixels[y][x];
+                        }
+                        catch(e){
+                            console.log(x);
+                            console.log(y);
+                            console.log(i);
+                        }
+                        d[i] = pixel.r;
+                        d[i+1] = pixel.g;
+                        d[i+2] = pixel.b;
+                        d[i+3] = pixel.a;
                     }
                     context.putImageData(imgData, 0, 0);
                 };
