@@ -21,6 +21,22 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 $scope.rangeG = 50;
                 $scope.rangeB = 50;
                 $scope.frequency = 0;
+                $scope.progress = 0;
+
+                var value = Math.floor((Math.random() * 100) + 1);
+                if (value < 25) {
+                    type = 'success';
+                } else if (value < 50) {
+                    type = 'info';
+                } else if (value < 75) {
+                    type = 'warning';
+                } else {
+                    type = 'danger';
+                }
+
+                $scope.showWarning = (type === 'danger' || type === 'warning');
+                $scope.dynamic = value;
+                $scope.type = type;
 
                 function reset(){
                     $scope.pixel = new Pixel(255, 255, 255, 255);
@@ -196,17 +212,24 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     }
                 };
 
+
                 $scope.detectPuzzles = function(){
                     $scope.cutBackground();
                     logService.log('Begin of puzzle detect');
-                    $timeout(function () {
-                        var queue = new Queue();
-                        for (var y = 0; y < $scope.pixels.length; y++)
+                    $scope.progress = 0;
+                    $scope.progressType = "info";
+                    $timeout(function(){
+                        //var queue = new Queue();
+                        for (var y = 0; y < $scope.pixels.length; y++) {
                             for (var x = 0; x < $scope.pixels[y].length; x++) {
                                 //queue.register($scope.processPixel, x, y);
                                 $scope.processPixel(x, y);
                             }
-                        queue.activate();
+                            $scope.progress = (parseFloat(y) / $scope.pixels.length) * 100;
+                        }
+                        //queue.activate();
+                        $scope.progress = 100;
+                        $scope.$broadcast('queue-end');
                         logService.log('End of puzzle detect')
                     });
                 };

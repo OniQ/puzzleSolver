@@ -35,7 +35,10 @@
         </div>
     </div>
 </div>
-<logger></logger>
+<div id="aboveImageArea">
+    <logger></logger>
+    <uib-progressbar class="progress-striped active" value="progress" type="{{progressType}}"><i ng-show="progress > 0">{{progress}}%</i></uib-progressbar>
+</div>
 <div id="pictureContainer" ng-click="pictureClicked()" ng-class="{imageLoaded : hasImage}">
     <canvas id="puzzlePicture" width="500" height="300"/>
 </div>

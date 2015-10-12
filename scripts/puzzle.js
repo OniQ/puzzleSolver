@@ -20,7 +20,7 @@ define([
             + (hh[1]?hh:"0"+hh[0]) + ':' + (mm[1]?mm:"0"+mm[0]) + ':' + (ss[1]?ss:"0"+ss[0]); // padding
     };
 
-    var app = angular.module('puzzle', ['ngRoute', 'puzzle.controllers', 'puzzle.directives', 'puzzle.services']);
+    var app = angular.module('puzzle', ['ngRoute', 'ui.bootstrap', 'puzzle.controllers', 'puzzle.directives', 'puzzle.services']);
 
     app.config(function ($routeProvider, $provide) {
         $routeProvider

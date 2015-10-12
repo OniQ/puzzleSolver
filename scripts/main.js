@@ -24,6 +24,7 @@ require.config({
                 'puzzleServices',
                 //Libs
                 'lib/underscore-min',
+                'lib/ui-bootstrap-tpls-0.14.1.min',
                 //Directives
                 'app/directives/image-container',
                 'app/directives/range-slider',
