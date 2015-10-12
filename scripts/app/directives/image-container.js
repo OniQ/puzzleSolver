@@ -17,13 +17,17 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 context.font = "15px Monospace";
                 context.fillText("Drop image here or click to select",canvas.width/4.5,canvas.height/2);
 
-                $scope.pixel = new Pixel(255, 255, 255, 255);
-                $scope.fixedPixel = angular.copy($scope.pixel);
-
                 $scope.rangeR = 50;
                 $scope.rangeG = 50;
                 $scope.rangeB = 50;
                 $scope.frequency = 0;
+
+                function reset(){
+                    $scope.pixel = new Pixel(255, 255, 255, 255);
+                    $scope.fixedPixel = angular.copy($scope.pixel);
+                }
+
+                reset();
 
                 function Pixel(r, g, b, a, x, y, i){
                     this.r = r;
@@ -111,10 +115,6 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         if (i >= this.queue.length) {
                             //end of queue
                             $scope.$broadcast('queue-end');
-                            console.log($scope.puzzles.length);
-                            for (var puzzle in $scope.puzzles){
-                                console.log($scope.puzzles[puzzle]);
-                            }
                             return;
                         }
                         var next = this;
@@ -238,7 +238,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     context.putImageData(id, pixel.x, pixel.y);
                 };
 
-                $scope.$on('queue-end', function(){
+                function detectCorners(){
                     for (var i = 0; i <  $scope.puzzles.length; i++){
                         var puzzle = $scope.puzzles[i];
 
@@ -262,11 +262,21 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         var topLeft = _.first(_.sortBy(minYA, 'x'));
                         var bottomRight  =_.last(_.sortBy(maxYA, 'x'));
                         //color corners
-                        $scope.writePixel(bottomRight, COLOR_YELLOW);
-                        $scope.writePixel(topRight, new Color(255,20,147));
-                        $scope.writePixel(topLeft, new Color(131, 27, 142));
-                        $scope.writePixel(bottomLeft, new Color(255, 153, 51));
+                        $scope.writePixel(bottomRight, COLOR_GREEN);
+                        $scope.writePixel(topRight, COLOR_GREEN);
+                        $scope.writePixel(topLeft, COLOR_GREEN);
+                        $scope.writePixel(bottomLeft, COLOR_GREEN);
                     }
+                }
+
+                $scope.$on('queue-end', function(){
+
+                    logService.log('Puzzles found: ' + $scope.puzzles.length);
+                    for (var puzzle in $scope.puzzles){
+                        logService.log(puzzle + ': ' + $scope.puzzles[puzzle].length);
+                    }
+
+                    detectCorners();
                 });
 
                 $scope.restoreBackground = function(){
@@ -303,14 +313,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                             y++;
                             x = 0;
                         }
-                        try {
-                            var pixel = $scope.pixels[y][x];
-                        }
-                        catch(e){
-                            console.log(x);
-                            console.log(y);
-                            console.log(i);
-                        }
+                        var pixel = $scope.pixels[y][x];
                         d[i] = pixel.r;
                         d[i+1] = pixel.g;
                         d[i+2] = pixel.b;
@@ -320,6 +323,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 };
 
                 function appendFile(image){
+                    $scope.pixels = [];
                     $scope.src = image.src;
                     $scope.hasImage = true;
 
@@ -354,7 +358,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 function handleFileDrop(evt) {
                     evt.stopPropagation();
                     evt.preventDefault();
-
+                    reset();
                     var files = evt.dataTransfer.files;
 
                     if (files.length > 0)
