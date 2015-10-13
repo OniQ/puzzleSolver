@@ -17,9 +17,6 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 context.font = "15px Monospace";
                 context.fillText("Drop image here or click to select",canvas.width/4.5,canvas.height/2);
 
-                $scope.pixel = new Pixel(255, 255, 255, 255);
-                $scope.fixedPixel = angular.copy($scope.pixel);
-
                 $scope.rangeR = 50;
                 $scope.rangeG = 50;
                 $scope.rangeB = 50;
@@ -67,6 +64,14 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         return dist;
                     }
                 }
+
+                $scope.reset = function(){
+                    $scope.pixels = [];
+                    $scope.pixel = new Pixel(255, 255, 255, 255);
+                    $scope.fixedPixel = angular.copy($scope.pixel);
+                };
+
+                $scope.reset();
 
                 $scope.pictureClicked = function(){
                     if (!$scope.hasImage)
@@ -238,7 +243,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     context.putImageData(id, pixel.x, pixel.y);
                 };
 
-                $scope.$on('queue-end', function(){
+                function detectCorners(){
                     for (var i = 0; i <  $scope.puzzles.length; i++){
                         var puzzle = $scope.puzzles[i];
 
@@ -262,11 +267,16 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         var topLeft = _.first(_.sortBy(minYA, 'x'));
                         var bottomRight  =_.last(_.sortBy(maxYA, 'x'));
                         //color corners
-                        $scope.writePixel(bottomRight, COLOR_YELLOW);
-                        $scope.writePixel(topRight, new Color(255,20,147));
-                        $scope.writePixel(topLeft, new Color(131, 27, 142));
-                        $scope.writePixel(bottomLeft, new Color(255, 153, 51));
+                        $scope.writePixel(bottomRight, COLOR_RED);
+                        $scope.writePixel(topRight, COLOR_RED);
+                        $scope.writePixel(topLeft, COLOR_RED);
+                        $scope.writePixel(bottomLeft, COLOR_RED);
                     }
+                }
+
+                $scope.$on('queue-end', function(){
+                    logService.log('Puzzles found: ' + $scope.puzzles.length);
+                    detectCorners();
                 });
 
                 $scope.restoreBackground = function(){
@@ -354,6 +364,8 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 function handleFileDrop(evt) {
                     evt.stopPropagation();
                     evt.preventDefault();
+
+                    $scope.reset();
 
                     var files = evt.dataTransfer.files;
 
