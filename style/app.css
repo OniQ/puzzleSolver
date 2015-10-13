@@ -72,5 +72,7 @@
     color: crimson;
     height: 70px;
     overflow: auto;
+}
+#aboveImageArea{
     width: 600px;
 }

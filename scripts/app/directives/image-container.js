@@ -17,10 +17,36 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 context.font = "15px Monospace";
                 context.fillText("Drop image here or click to select",canvas.width/4.5,canvas.height/2);
 
+                $scope.pixel = new Pixel(255, 255, 255, 255);
+                $scope.fixedPixel = angular.copy($scope.pixel);
+
                 $scope.rangeR = 50;
                 $scope.rangeG = 50;
                 $scope.rangeB = 50;
                 $scope.frequency = 0;
+                $scope.progress = 0;
+
+                var value = Math.floor((Math.random() * 100) + 1);
+                if (value < 25) {
+                    type = 'success';
+                } else if (value < 50) {
+                    type = 'info';
+                } else if (value < 75) {
+                    type = 'warning';
+                } else {
+                    type = 'danger';
+                }
+
+                $scope.showWarning = (type === 'danger' || type === 'warning');
+                $scope.dynamic = value;
+                $scope.type = type;
+
+                $scope.reset = function(){
+                    $scope.pixel = new Pixel(255, 255, 255, 255);
+                    $scope.fixedPixel = angular.copy($scope.pixel);
+                }
+
+                $scope.reset();
 
                 function Pixel(r, g, b, a, x, y, i){
                     this.r = r;
@@ -64,14 +90,6 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         return dist;
                     }
                 }
-
-                $scope.reset = function(){
-                    $scope.pixels = [];
-                    $scope.pixel = new Pixel(255, 255, 255, 255);
-                    $scope.fixedPixel = angular.copy($scope.pixel);
-                };
-
-                $scope.reset();
 
                 $scope.pictureClicked = function(){
                     if (!$scope.hasImage)
@@ -204,14 +222,20 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 $scope.detectPuzzles = function(){
                     $scope.cutBackground();
                     logService.log('Begin of puzzle detect');
-                    $timeout(function () {
-                        var queue = new Queue();
-                        for (var y = 0; y < $scope.pixels.length; y++)
+                    $scope.progress = 0;
+                    $scope.progressType = "info";
+                    $timeout(function(){
+                        //var queue = new Queue();
+                        for (var y = 0; y < $scope.pixels.length; y++) {
                             for (var x = 0; x < $scope.pixels[y].length; x++) {
                                 //queue.register($scope.processPixel, x, y);
                                 $scope.processPixel(x, y);
                             }
-                        queue.activate();
+                            $scope.progress = (parseFloat(y) / $scope.pixels.length) * 100;
+                        }
+                        //queue.activate();
+                        $scope.progress = 100;
+                        $scope.$broadcast('queue-end');
                         logService.log('End of puzzle detect')
                     });
                 };
@@ -276,6 +300,10 @@ define(['puzzleDirectives'], function(puzzleDirectives){
 
                 $scope.$on('queue-end', function(){
                     logService.log('Puzzles found: ' + $scope.puzzles.length);
+                    for (var puzzle in $scope.puzzles){
+                        logService.log(puzzle + ': ' + $scope.puzzles[puzzle].length);
+                    }
+
                     detectCorners();
                 });
 
