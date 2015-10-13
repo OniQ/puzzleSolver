@@ -35,8 +35,8 @@
     font-family: monospace;
 }
 .colorViewer{
-    width: 60px;
-    height: 60px;
+    /*width: 60px;*/
+    /*height: 60px;*/
     border: solid black 1px;
     padding: 10px;
 }
@@ -47,8 +47,9 @@
     color: red;
 }
 .rangeSlider{
-    position: relative;
-    top: 6px;
+    /*position: relative;*/
+    /*top: 6px;*/
+    /*float:left;*/
 }
 .buttonPanel{
     /*margin: 5px;*/
@@ -58,7 +59,7 @@
     margin-bottom: 5px;
 }
 .colorContainer{
-    width: 180px;
+    width: 110px;
 }
 .rangeContainer{
     width: 300px;
@@ -68,8 +69,8 @@
     top: -10px;
 }
 #logArea{
-    background-color: #84ff50;
-    color: crimson;
+    background-color: rgba(75, 251, 227, 0.79);
+    color: #1a38dc;
     height: 70px;
     overflow: auto;
 }
