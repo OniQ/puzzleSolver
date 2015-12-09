@@ -218,26 +218,59 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         context.putImageData(id, x, y );
                     }
                 };
-
+                var sides = [];
                 $scope.detectPuzzles = function(){
                     $scope.cutBackground();
                     logService.log('Begin of puzzle detect');
                     $scope.progress = 0;
                     $scope.progressType = "info";
-                    $timeout(function(){
-                        //var queue = new Queue();
-                        for (var y = 0; y < $scope.pixels.length; y++) {
-                            for (var x = 0; x < $scope.pixels[y].length; x++) {
-                                //queue.register($scope.processPixel, x, y);
-                                $scope.processPixel(x, y);
+                    for (var y = 0; y < $scope.pixels.length; y++)
+                        for (var x = 0; x < $scope.pixels[y].length; x++) {
+                            var pixel = $scope.pixels[y][x];
+                            pixel.defineIfBackground($scope.fixedPixel);
+                            if (pixel.isBackground)
+                                continue;
+                            var around = [];
+                            //var pixel_l =
+                            around.push($scope.pixels[y][x - 1]);
+                            //var pixel_lt =
+                            around.push($scope.pixels[y + 1][x - 1]);
+                            //var pixel_t =
+                            around.push($scope.pixels[y + 1][x]);
+                            //var pixel_tr =
+                            around.push($scope.pixels[y + 1][x + 1]);
+                            //var pixel_r =
+                            around.push($scope.pixels[y][x + 1]);
+                            //var pixel_rb =
+                            around.push($scope.pixels[y + 1][x + 1]);
+                            //var pixel_b =
+                            around.push($scope.pixels[y - 1][x]);
+                            //var pixel_bl =
+                            around.push($scope.pixels[y - 1][x - 1]);
+                            var isSide = false;
+                            for (var a = 0; a < around.length; a++) {
+                                around[a].defineIfBackground($scope.fixedPixel);
+                                if (around[a].isBackground)
+                                    isSide = true;
                             }
-                            $scope.progress = (parseFloat(y) / $scope.pixels.length) * 100;
+                            if (isSide)
+                                sides.push(pixel);
                         }
-                        //queue.activate();
-                        $scope.progress = 100;
-                        $scope.$broadcast('queue-end');
-                        logService.log('End of puzzle detect')
-                    });
+                    $scope.writePixelArray(sides);
+                    //$timeout(function(){
+                    //    //var queue = new Queue();
+                    //    for (var y = 0; y < $scope.pixels.length; y++) {
+                    //        for (var x = 0; x < $scope.pixels[y].length; x++) {
+                    //            //queue.register($scope.processPixel, x, y);
+                    //            $scope.processPixel(x, y);
+                    //        }
+                    //        $scope.progress = (parseFloat(y) / $scope.pixels.length) * 100;
+                    //    }
+                    //    //queue.activate();
+                    //    $scope.progress = 100;
+                    //    $scope.$broadcast('queue-end');
+                    //    logService.log('End of puzzle detect')
+                    //});
                 };
 
                 function Color(r, g, b, a){
@@ -267,6 +300,12 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     context.putImageData(id, pixel.x, pixel.y);
                 };
 
+                $scope.writePixelArray = function(pixels){
+                    for (var p = 0; p < pixels.length; p++){
+                        $scope.writePixel(pixels[p], COLOR_BLUE);
+                    }
+                };
+
                 function detectCorners(){
                     for (var i = 0; i <  $scope.puzzles.length; i++){
                         var puzzle = $scope.puzzles[i];
@@ -285,6 +324,10 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         var minYA = _.select (sortedY, function(p){return p.y == minY.y;});
                         var maxYA = _.select (sortedY, function(p){return p.y == maxY.y;});
 
+                        $scope.writePixelArray(minXA);
+                        $scope.writePixelArray(maxXA);
+                        $scope.writePixelArray(minYA);
+                        $scope.writePixelArray(maxYA);
 
                         var bottomLeft = _.last(_.sortBy(minXA, 'y'));
                         var topRight  =_.first(_.sortBy(maxXA, 'y'));
@@ -304,7 +347,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                         logService.log(puzzle + ': ' + $scope.puzzles[puzzle].length);
                     }
 
-                    detectCorners();
+                    //detectCorners();
                 });
 
                 $scope.restoreBackground = function(){
