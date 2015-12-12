@@ -9,7 +9,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
 
                 var fileInput = document.createElement("input");
                 fileInput.type = "file";
-                fileInput.accept = "image/png";
+                fileInput.accept = "image/*";
                 fileInput.id = "fileInput";
 
                 var canvas = document.getElementById('puzzlePicture');
@@ -219,7 +219,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     }
                 };
 
-                function getIfSide(x, y, puzzle){
+                function fillPuzzleSide(x, y, puzzle){
                     var pixel = $scope.pixels[y][x];
 
                     if (pixel.dirty)
@@ -249,7 +249,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                             }
                         }
                         else{
-                            getIfSide(nearPixel.x, nearPixel.y, puzzle);
+                            fillPuzzleSide(nearPixel.x, nearPixel.y, puzzle);
                         }
                     }
                 }
@@ -265,7 +265,7 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                             if ($scope.pixels[y][x].dirty)
                                 continue;
                             var puzzle = [];
-                            getIfSide(x, y, puzzle);
+                            fillPuzzleSide(x, y, puzzle);
                             if (puzzle.length > 0)
                                 puzzles.push(puzzle);
                         }
@@ -273,7 +273,8 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                     logService.log(puzzles.length + ' puzzles found');
 
                     for (var i = 0; i < puzzles.length; i++){
-                        $scope.writePixelArray(puzzles[i], new Color(Math.floor((Math.random() * 255)), Math.floor((Math.random() * 255)), Math.floor((Math.random() * 255))));
+                        $scope.writePixelArray(puzzles[i], new Color(Math.floor((Math.random() * 255)),
+                            Math.floor((Math.random() * 255)), Math.floor((Math.random() * 255))));
                     }
 
                     //$timeout(function(){
@@ -476,7 +477,9 @@ define(['puzzleDirectives'], function(puzzleDirectives){
                 function handleFileSelect(evt) {
                     var files = evt.target.files;
                     if (files.length > 0)
-                        imageManager.processFile(files[0]).then(appendFile);
+                        imageManager.processFile(files[0]).then(appendFile, function(e){
+                            logService.log(e);
+                        });
                 }
 
                 fileInput.addEventListener('change',

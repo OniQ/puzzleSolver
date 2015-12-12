@@ -41,7 +41,7 @@ define(['puzzleServices'], function(puzzleServices){
                         service.image = image;
                         deferred.resolve(service.image);
                     };
-                    image.onerror= function() {
+                    image.onerror= function(e, msg) {
                         deferred.reject('Invalid file type: '+ file.type);
                     };
                 };
@@ -51,8 +51,8 @@ define(['puzzleServices'], function(puzzleServices){
             service.processFile = function(file){
                 service.fileName = file.name;
                 service.fileType = service.fileName .split('.').pop();
-                if ($rootScope.supportedFiles.indexOf(service.fileType) == -1 )
-                    throw new Error("Not supporter file type");
+                //if ($rootScope.supportedFiles.indexOf(service.fileType) == -1 )
+                    //throw new Error("Not supporter file type");
                 readBytes(file);
                 return loadImage(file);
             };
